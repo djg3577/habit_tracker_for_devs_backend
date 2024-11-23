@@ -9,6 +9,7 @@ exports.default = async ({ expressApp }) => {
         (0, express_1.default)({ app: expressApp });
     }
     catch (e) {
+        console.log(e);
         process.exit(1);
     }
 };
