@@ -1,0 +1,20 @@
+{
+  "name": "habit_tracker_for_devs_backend",
+  "version": "1.0.0",
+  "description": "habit tracker for devs backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/server/app",
+    "build": "npx --package typescript tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.2"
+  }
+}
