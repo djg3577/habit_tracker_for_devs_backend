@@ -14,21 +14,18 @@ export default {
     }
   },
 
-  async getUserByEmail(req, res) {
+  async GithubLogin(req, res) {
     try {
+      const { code } = req.body;
       const authService = Container.get(AuthService);
-      const result = authService.getUserByEmail(req.email);
-      return res.status(200).json({ result });
-    } catch (error) {
-      console.log(error);
-    }
-  },
+      const response = await authService.exchangeGithubToken(code);
 
-  async verifyUserEmail(req, res) {
-    try {
-      await this.db.query;
-    } catch (error) {
-      console.log(error);
+      return res.status(200).json({
+        response,
+      });
+    } catch (e) {
+      console.log(e);
+      return res.status(500).json(e);
     }
   },
 };

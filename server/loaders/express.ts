@@ -5,18 +5,27 @@ import cookieParser from "cookie-parser"
 import routes from "../api/routes";
 
 export default ({ app }: { app: Application }) => {
-  // enables cross origin resource sharing
-  app.use(cors())
+  // Configure CORS with specific options
+  app.use(cors({
+    origin: ['http://localhost:5173', 'https://github.com'], // Add your frontend URL and GitHub
+    credentials: true, // Allow credentials
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  }));
+
+  // Handle preflight requests
+  app.options('*', cors());
 
   // flexibility on PUT POST DELETE calls
-  app.use(require("method-override")())
+  app.use(require("method-override")());
 
-  // req.body turns into json
-  app.use(bodyParser.json())
+  // Increase payload limit if needed
+  app.use(bodyParser.json({ limit: '10mb' }));
+  app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
-  //turns cookies into json
-  app.use(cookieParser())
+  // Configure cookie parser with options if needed
+  app.use(cookieParser());
 
-  //ALL API
-  app.use(routes())
+  // ALL API
+  app.use('/api', routes()); // Add /api prefix to match your baseURL
 };

@@ -8,15 +8,23 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const routes_1 = __importDefault(require("../api/routes"));
 exports.default = ({ app }) => {
-    // enables cross origin resource sharing
-    app.use((0, cors_1.default)());
+    // Configure CORS with specific options
+    app.use((0, cors_1.default)({
+        origin: ['http://localhost:5173', 'https://github.com'], // Add your frontend URL and GitHub
+        credentials: true, // Allow credentials
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Specify allowed methods
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    }));
+    // Handle preflight requests
+    app.options('*', (0, cors_1.default)());
     // flexibility on PUT POST DELETE calls
     app.use(require("method-override")());
-    // req.body turns into json
-    app.use(body_parser_1.default.json());
-    //turns cookies into json
+    // Increase payload limit if needed
+    app.use(body_parser_1.default.json({ limit: '10mb' }));
+    app.use(body_parser_1.default.urlencoded({ extended: true, limit: '10mb' }));
+    // Configure cookie parser with options if needed
     app.use((0, cookie_parser_1.default)());
-    //ALL API
-    app.use((0, routes_1.default)());
+    // ALL API
+    app.use('/api', (0, routes_1.default)()); // Add /api prefix to match your baseURL
 };
 //# sourceMappingURL=express.js.map

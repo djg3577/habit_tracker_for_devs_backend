@@ -6,20 +6,24 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/server/app",
-    "build": "npx --package typescript tsc"
+    "build": "npx --package typescript tsc",
+    "start:dev": "clear && npm run build && nodemon dist/server/app"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.7",
     "@types/pg": "^8.11.10",
+    "axios": "^1.7.7",
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "method-override": "^3.0.0",
     "pg": "^8.13.1",
+    "reflect-metadata": "^0.2.2",
     "typedi": "^0.10.0"
   },
   "devDependencies": {
