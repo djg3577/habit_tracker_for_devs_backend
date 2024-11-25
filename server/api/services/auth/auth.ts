@@ -1,9 +1,61 @@
-import { Service } from "typedi";
+import Container, { Service } from "typedi";
 import axios from "axios";
+import { User } from "../../interfaces/user";
+import { Pool } from "pg";
+import { validateJWT } from "../../../utils/validateJWT";
 
 @Service()
 export default class AuthService {
   constructor() {}
+
+  async authenticateUser(authHeader: string) {
+    const { token, tokenType } = this._parseHeader(authHeader);
+
+    switch (tokenType) {
+      case "jwt":
+        return this._authenticateJWTUser(token);
+      default:
+        return this.getGitHubUser(token);
+    }
+  }
+  private _parseHeader(authHeader: string): {
+    token: string;
+    tokenType: string;
+  } {
+    const [type, token] = authHeader.split(" ");
+    if (!token) throw new Error("Invalid authorization header format");
+
+    return {
+      token,
+      tokenType: type.toLowerCase(),
+    };
+  }
+
+  private async _authenticateJWTUser(token: string): Promise<Partial<User>> {
+    const user = await this.decodeJWT(token);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  }
+
+  private async decodeJWT(token: string) {
+    const userID = await validateJWT(token);
+    const db = Container.get<Pool>("pool");
+    const client = await db.connect();
+    const result = await client.query(
+      "SELECT id, username, email FROM users WHERE id = $1",
+      [userID],
+    );
+
+    if (!result.rows?.[0]) return null;
+
+    return {
+      id: result.rows[0].id,
+      username: result.rows[0].username,
+      email: result.rows[0].email,
+    };
+  }
 
   async exchangeGithubToken(code: string) {
     if (!code) return new Error(" GITHUB CODE REQUIRED ");

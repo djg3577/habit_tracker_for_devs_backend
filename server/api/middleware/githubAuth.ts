@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import axios from "axios";
 interface GithubUser {
   id: number;
   login: string;
@@ -16,27 +16,25 @@ declare global {
 const githubAuthMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) return res.status(401).json({ error: "NO authorization header provided" });
+  if (!authHeader)
+    return res.status(401).json({ error: "NO authorization header provided" });
 
-  const bearerToken = authHeader.split(" ");
-  if (bearerToken.length !== 2) return res.status(401).json({ error: "Invalid token format" });
+  const [bearer, token] = authHeader.split(" ");
 
-  const token = bearerToken[1];
+  if (!bearer || !token || bearer.toLowerCase() !== "bearer") {
+    return res.status(401).json({ error: "Invalid token format" });
+  }
 
   try {
-    const response = await fetch("http://api.github.com/user", {
+    const tokenUrl = "https://api.github.com/user";
+    const headers = {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
       },
-    });
-    if (!response.ok) return res.status(401).json({ error: "Invalid Github token" });
-
-    const githubUser = await response.json();
-    const internalUserId = `user_${githubUser.id}`;
-
-    req.userID = internalUserId;
-    req.githubUser = githubUser;
+    };
+    const { data } = await axios.get(tokenUrl, headers);
+    req.user = data;
     next();
   } catch (error) {
     console.log("ERROR WITH GITHUB AUTH", error);

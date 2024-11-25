@@ -13,9 +13,13 @@
     "noEmit": false,
     "esModuleInterop": true,
     "target": "ES2018",
-    "rootDir": "./",
-    "outDir": "dist",
-    "noImplicitAny": false
+    "rootDir": "./server",  
+    "outDir": "./dist",
+    "noImplicitAny": false,
+    "baseUrl": "./server",  
+    "paths": {              
+      "@/*": ["*"]
+    }
   },
   "include": ["server/**/*"],
   "exclude": ["node_modules", "tests", "dist"]

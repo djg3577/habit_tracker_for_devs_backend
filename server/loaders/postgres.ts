@@ -4,15 +4,14 @@ import { Container } from "typedi";
 export default async () => {
   try {
     const pool = new Pool({
-      user: process.env.POSTGRES_USER,
-      host: process.env.POSTGRES_HOST,
-      database: process.env.POSTGRES_DB,
-      password: process.env.POSTGRES_PASSWORD,
-      port: parseInt(process.env.POSTGRES_PORT || "5432"),
+      user: process.env.DB_USER,
+      host: process.env.DB_HOST,
+      database: process.env.DB_NAME,
+      port: parseInt(process.env.DB_PORT || "5432"),
     });
 
     // Register the pool in the container
-    Container.set("db", pool);
+    Container.set("pool", pool);
 
     return pool;
   } catch (error) {

@@ -4,9 +4,14 @@ import AuthService from "../../services/auth/auth";
 export default {
   async decodeJWT(req, res) {
     try {
+      const authService = Container.get(AuthService);
+      const authHeader = req.headers.authorization;
+      if (!authHeader)
+        return res.status(401).json({ error: "Missing Authorization header" });
+      
+      const user = await authService.authenticateUser(authHeader);
       return res.status(200).json({
-        user: req.githubUser,
-        userId: req.userID,
+        user,
       });
     } catch (error) {
       console.log(error);

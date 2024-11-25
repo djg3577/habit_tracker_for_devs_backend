@@ -1,15 +1,18 @@
 import { Router } from "express";
+import controllers from "../../controllers";
+import githubAuthMiddleware from "../../middleware/githubAuth";
 
-const route = Router()
-export default (app:Router) =>{
-  app.use("/activities", route)
+const route = Router();
+export default (app: Router) => {
+  app.use("/activities", route);
 
-  //Will use the log activity in the activity controller here
-  app.post("/")
+  route.post("/", githubAuthMiddleware, controllers.activity.logActivity);
 
-  //Will use the get activity in the activity controller here
-  app.get("/")
+  route.get("/", githubAuthMiddleware, controllers.activity.getActivityTotals);
 
-  //Will use the get dates in the activity controller here
-  app.get("/dates")
-}
+  route.get(
+    "/dates",
+    githubAuthMiddleware,
+    controllers.activity.getActivityDates,
+  );
+};
